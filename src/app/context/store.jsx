@@ -76,6 +76,7 @@ const GlobalStateProvider = ({ children }) => {
     1. fetchUserNfts function fetch particular User's NFts [nft id].
   */
   const fetchUserNfts = async (nftContractAddress) => {
+    console.log(nftContractAddress)
     try {
       const data = await clientSigner.queryContractSmart(nftContractAddress, {
         tokens: {
@@ -86,31 +87,22 @@ const GlobalStateProvider = ({ children }) => {
       });
 
       await data?.tokens?.map(async (item) => {
-        let imageData = await clientSigner.queryContractSmart(
-          nftContractAddress,
-          {
+        let imageData = await clientSigner.queryContractSmart(nftContractAddress, {
             nft_info: {
               token_id: item,
             },
-          }
-        );
+          });
 
         let image = imageData?.extension ? imageData?.extension?.image.replace("ipfs://", ipfsGateway) : "https://ipfs-gw.stargaze-apis.com/ipfs/bafybeiekar32u5m2i2dulzuyyj5azmm7ffvsljoomx7b35vaojtif4uh3a/2057.png";
+        const nftTokenData = {token_id: item, nftImage: image};
 
-        const nftTokenData = {
-          token_id: item,
-          nftImage: image
-        };
-
-        setUserNftsData([...userNftsData, nftTokenData]);     
+        setUserNftsData((prev) => [...prev, nftTokenData]);     
       })
-
-      console.log(userNftsData)
     } catch (error) {
       console.log(error)
     }
   }
-
+  console.log(userNftsData)
   return (
     <appState.Provider
       value={{
@@ -124,6 +116,7 @@ const GlobalStateProvider = ({ children }) => {
         clientSigner,
         vaultDataList,
         vaultNftsData,
+        userNftsData,
 
         /* State update provide by context */
         setVaultNftsData,
