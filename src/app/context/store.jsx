@@ -30,8 +30,7 @@ const GlobalStateProvider = ({ children }) => {
   const [userNftsData, setUserNftsData] = useState([]);
   const [vaultNftsImage, setVaultNftsImage] = useState([]);
   const [userNftPopUp, setUserNftPopUp] = useState(false);
-
-  /* 
+   /* 
     1. connectWallet function is used to connect wallet.
   */
   const connectWallet = async () => {
@@ -187,7 +186,6 @@ const GlobalStateProvider = ({ children }) => {
     }
   };
 
-  console.log(vaultNftsImage)
   return (
     <appState.Provider
       value={{
