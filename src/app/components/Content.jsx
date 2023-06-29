@@ -8,12 +8,14 @@ import Card from './Card';
 const Content = () => {
   const {
     /* Function provide by context */
+    fetchVaultNftImage,
 
     /* State provide by context */
     vaultDataList,
 
     /* State update provide by context */
     setVaultNftsData,
+    setVaultNftsImage,
   } = useContext(appState);
 
   const router = useRouter();
@@ -30,6 +32,12 @@ const Content = () => {
             return (
               <div key={index} onClick={() => {
                 setVaultNftsData(item);
+                setVaultNftsImage([]);
+
+                item?.vault_user_nft_data.map((inner) => {
+                  fetchVaultNftImage(item?.vault_nft_address, inner.nft_id)
+                })
+
                 router.push("/nfts")
               }}>
                 <Card item={item}/>

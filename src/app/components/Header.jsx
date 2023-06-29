@@ -30,8 +30,8 @@ const Header = () => {
         "osmo1k3j435f0pkla0tvgv20g73zm86aftg37surzndceex6any89qkvqfj6y4g",
         {
           mint: {
-            token_id: "300",
-            owner: signer,
+            token_id: "401",
+            owner: "osmo1xty7j5l0t4l98t8etkqkxshhk0qe7atgqwhhz9",
             extension: {
               image: "ipfs://QmaWAmpcy8pyK5B2Bwy1yGW9D3wsPWvqXcexCqSRCLghiy",
             },
@@ -67,14 +67,14 @@ const Header = () => {
           >
             Collections
           </Link>
-          <div
+          {/* <div
             className="hover:border border-zinc-500 hover:scale-105 py-2 px-4  hover:rounded-md inline-block rounded-full cursor-pointer"
             onClick={() => {
               mintNft();
             }}
           >
             Mint
-          </div>
+          </div> */}
           <button
             onClick={connectWallet}
             className="text-gray-900 bg-white hover:bg-gray-100 border border-gray-200  font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center  dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 mr-2 mb-2"

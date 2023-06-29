@@ -6,27 +6,51 @@ import DiamondIcon from "@mui/icons-material/Diamond";
 // https://cloudflare-ipfs.com/ipfs/
 
 const CreateVault = () => {
+
+  // const {
+  //   osmosisClientSigner,
+  //   osmosisSigner,
+  //   contractAddress,
+  //   fetchUserNft,
+  //   sendUserNft,
+  //   image, setImage,
+  //   fetchNftImage
+  // } = useContext(appState);
+
+  // const [select, setSelect] = useState(false);
+  // const [tokenData, setTokenData] = useState(null);
+  
+
   const {
-    osmosisClientSigner,
-    osmosisSigner,
-    contractAddress,
-    fetchUserNft,
+    /* Constant variable provide by context */
+        
+    /* Function provide by context */
+    fetchUserNfts,
     sendUserNft,
-    image, setImage,
-    fetchNftImage
+
+    /* State provide by context */
+    signer,
+    clientSigner,
+    userNftsData,
+
+    /* State update provide by context */
+    setUserNftsData,
+
   } = useContext(appState);
 
+
+  /*  */ 
+  const [tokenId, setTokenId] = useState(null);
+  const [imageData, setImageData] = useState(null);
   const [select, setSelect] = useState(false);
   const [create, setCreate] = useState(false);
-  const [tokenData, setTokenData] = useState(null);
-  const [tokenId, setTokenId] = useState(null);
   const [vaultData, setVaultData] = useState({
     name: "",
     symbol: "",
     address: "",
   });
-  const [imageData, setImageData] = useState(null)
 
+  /*  */ 
   const handleCreateVault = (e) => {
     e.preventDefault();
     setVaultData({ ...vaultData, [e.target.name]: e.target.value });
@@ -39,12 +63,14 @@ const CreateVault = () => {
     nft_asset_address: vaultData.address,
   };
 
+  /*  */ 
   const fetchData = async (e) => {
     e.preventDefault();
-    const data = await fetchUserNft(vaultData.address);
-    setTokenData(data);
+    setUserNftsData([]); fetchUserNfts(vaultData.address);
     setCreate(true);
   };
+
+  console.log(userNftsData);
 
   return (
     <div className="flex flex-1 justify-center items-center m-8 p-4 ">
@@ -99,42 +125,36 @@ const CreateVault = () => {
         </form>
       )}
 
+      {/*  */}
       {create && (
         <div>
-          {/* address - {vaultData.address}
-                    name - {vaultData.name}
-                    symbol - {vaultData.symbol} */}
           <div className="flex w-[90vw] ">
             <div className="flex flex-wrap gap-10 justify-start w-3/4  ">
-            {/* min-h-[50%] max-h-[500px]  */}
-              {tokenData?.map((item, index) => {
-                fetchNftImage(item, vaultData?.address).then((result) => {
-                  console.log(image)
-                  setImage(result);
-                }).catch((error) => {
-                  console.log(error);
+              {
+                userNftsData?.map((item, index) => {
+                  return (
+                    <div  tabIndex="1" className="flex flex-col justify-center focus:ring-4 rounded-md my-auto focus:ring-gray-200 p-3" key={index}>
+                      <div className="flex justify-between gap-3 items-center text-slate-300 ">
+                        <h3 className="text-sm font-semibold p-2">#{item.tokenId}</h3>
+                        <p>
+                          <span>1</span>
+                          <DiamondIcon className="h-5" />
+                        </p>
+                      </div>
+                      <div className="flex justify-center items-center">
+                        <img
+                          className="h-40 w-40 object-cover rounded-lg "
+                          onClick={()=>{setTokenId(item.tokenId); setImageData(item.nftImage); setSelect(true);}}
+                          src={item.nftImage}
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                  );
                 })
-                return (
-                  <div  tabIndex="1" className="flex flex-col justify-center focus:ring-4 rounded-md my-auto focus:ring-gray-200 p-3" key={index}>
-                    <div className="flex justify-between gap-3 items-center text-slate-300 ">
-                      <h3 className="text-sm font-semibold p-2">#{item}</h3>
-                      <p>
-                        <span>1</span>
-                        <DiamondIcon className="h-5" />
-                      </p>
-                    </div>
-                    <div className="flex justify-center items-center">
-                      <img
-                        className="h-40 w-40 object-cover rounded-lg "
-                        onClick={()=>{setTokenId(item); setImageData(image); setSelect(true);}}
-                        src={image}
-                        alt=""
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+              }
             </div>
+            {/*  */}
            {
             select && 
              <div className="bg-zinc-800 bg-opacity-25 rounded-md w-1/4 flex justify-center p-6 hover:scale-90 hover:z-0">
