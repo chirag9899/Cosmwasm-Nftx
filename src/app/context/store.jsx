@@ -10,9 +10,9 @@ const GlobalStateProvider = ({ children }) => {
   const router = useRouter();
 
   const smartContractAddress =
-  "osmo1upaq0t2ut5qpnt3puus8f4dm8e3u728we39kpcy7qpf463au9cks3vcvdk";
-    
-      const ipfsGateway = "https://cloudflare-ipfs.com/ipfs/";
+    "osmo1upaq0t2ut5qpnt3puus8f4dm8e3u728we39kpcy7qpf463au9cks3vcvdk";
+
+  const ipfsGateway = "https://cloudflare-ipfs.com/ipfs/";
 
   /* 
     1. signer state defines the account of user.
@@ -21,7 +21,6 @@ const GlobalStateProvider = ({ children }) => {
     4. vaultNftsData contains data of particular vault.
     5. userNftsData contains user's Nft image & id
     6. vaultNftsImage contains Nfts images & Ids of particular vault 
-    
   */
   const [signer, setSigner] = useState(null);
   const [clientSigner, setClientSigner] = useState(null);
@@ -30,11 +29,70 @@ const GlobalStateProvider = ({ children }) => {
   const [userNftsData, setUserNftsData] = useState([]);
   const [vaultNftsImage, setVaultNftsImage] = useState([]);
   const [userNftPopUp, setUserNftPopUp] = useState(false);
-   /* 
-    1. connectWallet function is used to connect wallet.
-  */
+
+  const addChain = async () => {
+    try {
+      console.log("Hello")
+
+      const data = await window.keplr.experimentalSuggestChain({
+        chainId: "osmo-test-5",
+        chainName: "Osmosis Testnet 5",
+        rpc: "https://rpc.osmotest5.osmosis.zone:443",
+        rest: "https://lcd.osmotest5.osmosis.zone:1317",
+        bip44: {
+          coinType: 118,
+        },
+        bech32Config: {
+          bech32PrefixAccAddr: "osmo",
+          bech32PrefixAccPub: "osmo" + "pub",
+          bech32PrefixValAddr: "osmo" + "valoper",
+          bech32PrefixValPub: "osmo" + "valoperpub",
+          bech32PrefixConsAddr: "osmo" + "valcons",
+          bech32PrefixConsPub: "osmo" + "valconspub",
+        },
+        currencies: [
+          {
+            coinDenom: "OSMO",
+            coinMinimalDenom: "uosmo",
+            coinDecimals: 6,
+            coinGeckoId: "osmosis",
+          },
+        ],
+        feeCurrencies: [
+          {
+            coinDenom: "OSMO",
+            coinMinimalDenom: "uosmo",
+            coinDecimals: 6,
+            coinGeckoId: "osmosis",
+            gasPriceStep: {
+              low: 0.01,
+              average: 0.025,
+              high: 0.04,
+            },
+          },
+        ],
+        stakeCurrency: {
+          coinDenom: "OSMO",
+          coinMinimalDenom: "uosmo",
+          coinDecimals: 6,
+          coinGeckoId: "osmosis",
+        },
+      });
+
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  /* 
+   1. connectWallet function is used to connect wallet.
+ */
   const connectWallet = async () => {
     try {
+
+      addChain();
+
       if (!window.keplr) {
         throw new Error("Keplr Wallet extension not found");
       }
@@ -99,11 +157,11 @@ const GlobalStateProvider = ({ children }) => {
         });
 
         let image = imageData?.extension ? imageData?.extension?.image.replace("ipfs://", ipfsGateway) : "https://ipfs-gw.stargaze-apis.com/ipfs/bafybeiekar32u5m2i2dulzuyyj5azmm7ffvsljoomx7b35vaojtif4uh3a/2057.png";
-        const nftTokenData = {tokenId: item, nftImage: image};
-        if(imageData) {
+        const nftTokenData = { tokenId: item, nftImage: image };
+        if (imageData) {
 
-        setUserNftsData((prev) => [...prev, nftTokenData]);    
-      }   
+          setUserNftsData((prev) => [...prev, nftTokenData]);
+        }
       })
     } catch (error) {
       console.log(error)
@@ -112,7 +170,7 @@ const GlobalStateProvider = ({ children }) => {
 
   /*  
     1. fetchVaultNftImage function fetch particular NFT images of vault
-  */ 
+  */
   const fetchVaultNftImage = async (nftContractAddress, tokenId) => {
     console.log(nftContractAddress, tokenId)
     try {
@@ -126,10 +184,10 @@ const GlobalStateProvider = ({ children }) => {
         console.log(imageData)
 
         let image = imageData?.extension ? imageData?.extension?.image.replace("ipfs://", ipfsGateway) : "https://ipfs-gw.stargaze-apis.com/ipfs/bafybeiekar32u5m2i2dulzuyyj5azmm7ffvsljoomx7b35vaojtif4uh3a/2057.png";
-        const nftTokenData = {tokenId: tokenId, nftImage: image};
-        setVaultNftsImage((prev) => [...prev, nftTokenData]);  
+        const nftTokenData = { tokenId: tokenId, nftImage: image };
+        setVaultNftsImage((prev) => [...prev, nftTokenData]);
       }
-      
+
     } catch (error) {
       console.log(error)
     }
@@ -137,7 +195,7 @@ const GlobalStateProvider = ({ children }) => {
 
   /*  
     1. sendUserNft function send nft to vault.
-  */ 
+  */
   const sendUserNft = async (nftAddress, tokenId, message) => {
     try {
       let transaction = await clientSigner.execute(
@@ -152,7 +210,7 @@ const GlobalStateProvider = ({ children }) => {
         },
         "auto"
       );
-  
+
       if (transaction && message.message === "Create Vault") {
         const data = await clientSigner.queryContractSmart(
           smartContractAddress,
@@ -172,7 +230,7 @@ const GlobalStateProvider = ({ children }) => {
         //     get_vault_array: {},
         //   }
         // );
-  
+
         // for (let i = 0; data?.Ok?.vault_array.length; i++) {
         //   if (data?.Ok?.vault_array[i].vault_nft_address === nftAddress) {
         //     // setVaultDataList(data?.Ok?.vault_array);
@@ -189,9 +247,9 @@ const GlobalStateProvider = ({ children }) => {
   return (
     <appState.Provider
       value={{
-         /* Constant variable provide by context */
-         smartContractAddress,
-          /* Function provide by context */
+        /* Constant variable provide by context */
+        smartContractAddress,
+        /* Function provide by context */
         connectWallet,
         fetchVaultList,
         fetchUserNfts,
